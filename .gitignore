@@ -1,0 +1,5 @@
+packages
+Halcyon.sln.ide
+*.suo
+obj/
+*.user
