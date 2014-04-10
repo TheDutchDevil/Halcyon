@@ -4,8 +4,11 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Text;
+
 
 namespace FormattingFixes.TypeToVar
 {
@@ -14,7 +17,7 @@ namespace FormattingFixes.TypeToVar
     {
         public IEnumerable<string> GetFixableDiagnosticIds()
         {
-            return new[] { DiagnosticAnalyzer.DiagnosticId };
+            return new[] {DiagnosticAnalyzer.DiagnosticId};
         }
 
         public async Task<IEnumerable<CodeAction>> GetFixesAsync(Document document, TextSpan span,
@@ -24,9 +27,26 @@ namespace FormattingFixes.TypeToVar
 
             var varibaleDeclr = (VariableDeclarationSyntax) root.FindToken(span.Start).Parent.Parent;
 
-            varibaleDeclr.Update();
+            return new[]
+            {
+                CodeAction.Create("Make declaration implicit", c =>
+                    MakeStaticDeclarationImplicit(document, varibaleDeclr, c))
+            };
+        }
 
-            return null;
+        private async Task<Document> MakeStaticDeclarationImplicit(Document document,
+            VariableDeclarationSyntax variableDeclaration, CancellationToken
+                cancellationToken)
+        {
+            var newVariableDeclaration = variableDeclaration.WithType(SyntaxFactory.IdentifierName("var"));
+
+            newVariableDeclaration = newVariableDeclaration.WithAdditionalAnnotations(Formatter.Annotation);
+
+            var oldRoot = await document.GetSyntaxRootAsync(cancellationToken);
+            var newRoot = oldRoot.ReplaceNode(variableDeclaration, newVariableDeclaration);
+
+
+            return document.WithSyntaxRoot(newRoot);
 
         }
 

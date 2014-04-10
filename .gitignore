@@ -3,3 +3,5 @@ Halcyon.sln.ide
 *.suo
 obj/
 *.user
+Lib/
+Build/
