@@ -38,15 +38,6 @@ namespace FormattingFixes.TypeToVar
             }
         }
 
-        private void NodeThingy()
-        {
-            var x = 0;
-            int y = 0;
-
-            int x2;
-            //var x3;
-        }
-
         public void AnalyzeNode(SyntaxNode node, SemanticModel semanticModel, Action<Diagnostic> addDiagnostic, CancellationToken cancellationToken)
         {
             var localDeclaration = (LocalDeclarationStatementSyntax) node;

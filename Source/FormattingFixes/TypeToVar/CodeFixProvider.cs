@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -44,7 +45,6 @@ namespace FormattingFixes.TypeToVar
 
             var oldRoot = await document.GetSyntaxRootAsync(cancellationToken);
             var newRoot = oldRoot.ReplaceNode(variableDeclaration, newVariableDeclaration);
-
 
             return document.WithSyntaxRoot(newRoot);
 
