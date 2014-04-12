@@ -9,11 +9,9 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace FormattingFixes.TypeToVar
 {
-    // TODO: Consider implementing other interfaces that implement IDiagnosticAnalyzer instead of or in addition to ISymbolAnalyzer
-
-    [DiagnosticAnalyzer]
+         [DiagnosticAnalyzer]
     [ExportDiagnosticAnalyzer(DiagnosticId, LanguageNames.CSharp)]
-    public class DiagnosticAnalyzer : ISyntaxNodeAnalyzer<SyntaxKind>
+    public class TypeToVarAnalyzer : ISyntaxNodeAnalyzer<SyntaxKind>
     {
         internal const string DiagnosticId = "TypeToVar";
         private const string Description = "A static type is used";
@@ -24,10 +22,7 @@ namespace FormattingFixes.TypeToVar
 
         public ImmutableArray<SyntaxKind> SyntaxKindsOfInterest
         {
-            get
-            {
-                return ImmutableArray.Create(SyntaxKind.LocalDeclarationStatement);
-            }
+            get { return ImmutableArray.Create(SyntaxKind.LocalDeclarationStatement); }
         }
 
         public ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics

@@ -13,12 +13,12 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace FormattingFixes.TypeToVar
 {
-    [ExportCodeFixProvider(DiagnosticAnalyzer.DiagnosticId, LanguageNames.CSharp)]
-    internal class CodeFixProvider : ICodeFixProvider
+    [ExportCodeFixProvider(TypeToVarAnalyzer.DiagnosticId, LanguageNames.CSharp)]
+    internal class TypeToVarFixProvider : ICodeFixProvider
     {
         public IEnumerable<string> GetFixableDiagnosticIds()
         {
-            return new[] {DiagnosticAnalyzer.DiagnosticId};
+            return new[] {TypeToVarAnalyzer.DiagnosticId};
         }
 
         public async Task<IEnumerable<CodeAction>> GetFixesAsync(Document document, TextSpan span,

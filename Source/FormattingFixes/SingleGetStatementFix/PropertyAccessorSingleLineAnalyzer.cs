@@ -14,11 +14,11 @@ namespace FormattingFixes.SingleGetStatementFix
 {
     [DiagnosticAnalyzer]
     [ExportDiagnosticAnalyzer(DiagnosticId, LanguageNames.CSharp)]
-    class GetDiagnosticAnalyzer : ISyntaxNodeAnalyzer<SyntaxKind>
+    class PropertyAccessorSingleLineAnalyzer : ISyntaxNodeAnalyzer<SyntaxKind>
     {
         internal const string DiagnosticId = "MultilineAccessor";
-        private const string Description = "A property accessor can be placed on one line";
-        private const string MessageFormat = "Reformat the get accessor";
+        private const string Description = "Checks the accessor of properties, throws a warning whenever one can be placed one one line";
+        private const string MessageFormat = "{0} accessor of {1} can be placed on one line";
         private const string Category = "Naming";
 
         private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Description, MessageFormat, Category, DiagnosticSeverity.Warning);
@@ -66,7 +66,10 @@ namespace FormattingFixes.SingleGetStatementFix
                     closingNotNewLined &&
                     accessorOnSameLineAsBlock))
                 {
-                    addDiagnostic(Diagnostic.Create(Rule, accessorDeclr.Keyword.GetLocation()));
+                    addDiagnostic(Diagnostic.Create(Rule, 
+                        accessorDeclr.Keyword.GetLocation(),
+                       char.ToUpper(accessorDeclr.Keyword.Text[0]) + accessorDeclr.Keyword.Text.Substring(1), 
+                        (accessorDeclr.Parent.Parent as PropertyDeclarationSyntax).Identifier));
                 }
             }
         }
