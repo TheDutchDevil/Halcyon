@@ -10,6 +10,7 @@ Two different diagnostics are currently implemented:
 
 - TypeToVar: Detects whenever a static declaration is used in places where an implicit declartion with the var keyword can be used. Offers to replace the static declaration with the var keyword.
 - SingleLinePropertyAccessor: Detects whenever the declaration of a single line property accessor takes up more than one line. Offers to fix the formatting by placing the property accessor on a single line.
+- Detect whenever a NotImplementedException is thrown without a message describing the reason. No fixes proposed. Currently only detects throws statements that initialize a new NotImplementedException. Does not check for earlier instantied objects that are thrown.
 
 
 Future fixes
@@ -18,6 +19,5 @@ Future fixes
 These are the fixes I am attempting to add in the near future:
 
 - Detect whenever a null pointer is returned by a method returning either an implementation of IEnumerable<T> or an array. Offer to fix it by returning an empty array.
-- Detect whenever a NotImplementedException is thrown without a message describing the reason. No fixes proposed.
 
 
