@@ -94,8 +94,8 @@
   <ItemGroup>
     <Compile Include="SingleGetStatementFix\PropertyAccessorSingleLineAnalyzer.cs" />
     <Compile Include="SingleGetStatementFix\PropertyAccesorSingleLineFixProvider.cs" />
-    <Compile Include="TypeToVar\CodeFixProvider.cs" />
-    <Compile Include="TypeToVar\DiagnosticAnalyzer.cs" />
+    <Compile Include="TypeToVar\TypeToVarFixProvider.cs" />
+    <Compile Include="TypeToVar\TypeToVarAnalyzer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

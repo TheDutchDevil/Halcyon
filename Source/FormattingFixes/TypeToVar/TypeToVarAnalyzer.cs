@@ -14,8 +14,8 @@ namespace FormattingFixes.TypeToVar
     public class TypeToVarAnalyzer : ISyntaxNodeAnalyzer<SyntaxKind>
     {
         internal const string DiagnosticId = "TypeToVar";
-        private const string Description = "A static type is used";
-        private const string MessageFormat = "Declaration requires the var keyword";
+        private const string Description = "A static type declaration is used";
+        private const string MessageFormat = "Local variable {0} is declared without the var keyword";
         private const string Category = "Naming";
 
         private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Description, MessageFormat, Category, DiagnosticSeverity.Warning);
@@ -42,7 +42,7 @@ namespace FormattingFixes.TypeToVar
             if (!variableDeclaration.Type.IsVar &&
                 variableDeclaration.ChildNodes().Any(nodeDeclr => nodeDeclr.ChildNodes().Any(childNode => childNode is EqualsValueClauseSyntax)))
             {
-                addDiagnostic(Diagnostic.Create(Rule, variableDeclaration.Type.GetLocation()));
+                addDiagnostic(Diagnostic.Create(Rule, variableDeclaration.Type.GetLocation(), variableDeclaration.Variables.First().Identifier.Value));
             }
         }
     }
