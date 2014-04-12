@@ -92,6 +92,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EmptyNotImplementedException\NotImplementedExceptionAnalyzer.cs" />
     <Compile Include="SingleGetStatementFix\PropertyAccessorSingleLineAnalyzer.cs" />
     <Compile Include="SingleGetStatementFix\PropertyAccesorSingleLineFixProvider.cs" />
     <Compile Include="TypeToVar\TypeToVarFixProvider.cs" />
@@ -121,6 +122,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
