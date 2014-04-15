@@ -20,7 +20,7 @@ namespace FormattingFixes.NullReturnForIEnumerable
     {
         internal const string DiagnosticId = "NullReturnForIEnumerable";
         private const string Description = "Verifies the return expression of methods that return IEnumerable and verifies that they do not retunr null";
-        private const string MessageFormat = "Method that returns an implemetnation of IEnumerable returns a null value. Fix this by returning an empty {0} implementation.";
+        private const string MessageFormat = "{1} which returns an implementation of IEnumerable returns a null value. Fix this by returning an empty {0} implementation.";
         private const string Category = "Naming";
 
         private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Description, MessageFormat, Category, DiagnosticSeverity.Warning);
@@ -57,7 +57,7 @@ namespace FormattingFixes.NullReturnForIEnumerable
                             (returnStatement.Expression as LiteralExpressionSyntax).CSharpKind() == SyntaxKind.NullLiteralExpression)
                         {
                             addDiagnostic(Diagnostic.Create(Rule, returnStatement.GetLocation(),
-                                methodDeclr.ReturnType.ToString()));
+                                methodDeclr.ReturnType.ToString(), methodDeclr.Identifier.Value));
                         }
                     }
 
