@@ -39,8 +39,6 @@ namespace FormattingFixes.TypeToVar
 
             var variableDeclaration = localDeclaration.Declaration;
 
-            Action methodDel = () => Console.WriteLine("hef");
-
             var variableInitializerDoesNotAssignNull =
                 variableDeclaration.Variables.Any(
                     declr =>
