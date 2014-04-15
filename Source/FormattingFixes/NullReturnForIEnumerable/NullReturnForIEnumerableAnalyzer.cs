@@ -18,9 +18,9 @@ namespace FormattingFixes.NullReturnForIEnumerable
     [ExportDiagnosticAnalyzer(DiagnosticId, LanguageNames.CSharp)]
     class NullReturnForIEnumerableAnalyzer : ISyntaxNodeAnalyzer<SyntaxKind>
     {
-        internal const string DiagnosticId = "MultilineAccessor";
-        private const string Description = "Checks the accessor of properties, throws a warning whenever one can be placed one one line";
-        private const string MessageFormat = "{0} accessor of {1} can be placed on one line";
+        internal const string DiagnosticId = "NullReturnForIEnumerable";
+        private const string Description = "Verifies the return expression of methods that return IEnumerable and verifies that they do not retunr null";
+        private const string MessageFormat = "Method that returns an implemetnation of IEnumerable returns a null value. Fix this by returning an empty {0} implementation.";
         private const string Category = "Naming";
 
         private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Description, MessageFormat, Category, DiagnosticSeverity.Warning);
@@ -33,7 +33,10 @@ namespace FormattingFixes.NullReturnForIEnumerable
 
         public ImmutableArray<SyntaxKind> SyntaxKindsOfInterest
         {
-            get { return ImmutableArray.Create(SyntaxKind.MethodDeclaration); }
+            get
+            {
+                return ImmutableArray.Create(SyntaxKind.MethodDeclaration);
+            }
         }
 
         public void AnalyzeNode(SyntaxNode node, SemanticModel semanticModel, Action<Diagnostic> addDiagnostic, CancellationToken cancellationToken)
@@ -46,7 +49,19 @@ namespace FormattingFixes.NullReturnForIEnumerable
 
                 if (methodSymbl.ReturnType.AllInterfaces.Any(type => type.Name == "IEnumerable"))
                 {
-                    
+                    foreach (var returnStatement in from returnStatement in methodDeclr.DescendantNodes()
+                        where returnStatement is ReturnStatementSyntax
+                        select returnStatement as ReturnStatementSyntax)
+                    {
+                        if (returnStatement.Expression is LiteralExpressionSyntax &&
+                            (returnStatement.Expression as LiteralExpressionSyntax).CSharpKind() == SyntaxKind.NullLiteralExpression)
+                        {
+                            addDiagnostic(Diagnostic.Create(Rule, returnStatement.GetLocation(),
+                                methodDeclr.ReturnType.ToString()));
+                        }
+                    }
+
+
                 }
             }
         }
