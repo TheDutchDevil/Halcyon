@@ -39,8 +39,15 @@ namespace FormattingFixes.TypeToVar
 
             var variableDeclaration = localDeclaration.Declaration;
 
+            bool variableInitializerDoesNotAssignNull =
+                variableDeclaration.Variables.Any(
+                    declr =>
+                        declr.Initializer != null &&
+                        declr.Initializer.Value.CSharpKind() != SyntaxKind.NullLiteralExpression);
+
             if (!variableDeclaration.Type.IsVar &&
-                variableDeclaration.ChildNodes().Any(nodeDeclr => nodeDeclr.ChildNodes().Any(childNode => childNode is EqualsValueClauseSyntax)))
+                variableDeclaration.DescendantNodes().Any(cNode => cNode is EqualsValueClauseSyntax) &&
+                variableInitializerDoesNotAssignNull)
             {
                 addDiagnostic(Diagnostic.Create(Rule, variableDeclaration.Type.GetLocation(), variableDeclaration.Variables.First().Identifier.Value));
             }
