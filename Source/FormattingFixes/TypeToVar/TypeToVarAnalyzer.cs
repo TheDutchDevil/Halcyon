@@ -39,15 +39,20 @@ namespace FormattingFixes.TypeToVar
 
             var variableDeclaration = localDeclaration.Declaration;
 
-            bool variableInitializerDoesNotAssignNull =
+            Action methodDel = () => Console.WriteLine("hef");
+
+            var variableInitializerDoesNotAssignNull =
                 variableDeclaration.Variables.Any(
                     declr =>
                         declr.Initializer != null &&
                         declr.Initializer.Value.CSharpKind() != SyntaxKind.NullLiteralExpression);
+            
+            var variableIdentifierIsNotADelegate = !(variableDeclaration.Type is IdentifierNameSyntax);
 
             if (!variableDeclaration.Type.IsVar &&
                 variableDeclaration.DescendantNodes().Any(cNode => cNode is EqualsValueClauseSyntax) &&
-                variableInitializerDoesNotAssignNull)
+                variableInitializerDoesNotAssignNull &&
+                variableIdentifierIsNotADelegate)
             {
                 addDiagnostic(Diagnostic.Create(Rule, variableDeclaration.Type.GetLocation(), variableDeclaration.Variables.First().Identifier.Value));
             }
