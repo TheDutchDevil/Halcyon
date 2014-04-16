@@ -21,7 +21,7 @@ namespace FormattingFixes.NullReturnForIEnumerable
         internal const string DiagnosticId = "NullReturnForIEnumerable";
         private const string Description = "Verifies the return expression of methods that return IEnumerable and verifies that they do not retunr null";
         private const string MessageFormat = "{1} which returns an implementation of IEnumerable returns a null value. Fix this by returning an empty {0} implementation.";
-        private const string Category = "Naming";
+        private const string Category = "Coding style";
 
         private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Description, MessageFormat, Category, DiagnosticSeverity.Warning);
 
@@ -33,10 +33,7 @@ namespace FormattingFixes.NullReturnForIEnumerable
 
         public ImmutableArray<SyntaxKind> SyntaxKindsOfInterest
         {
-            get
-            {
-                return ImmutableArray.Create(SyntaxKind.MethodDeclaration);
-            }
+            get { return ImmutableArray.Create(SyntaxKind.MethodDeclaration); }
         }
 
         public void AnalyzeNode(SyntaxNode node, SemanticModel semanticModel, Action<Diagnostic> addDiagnostic, CancellationToken cancellationToken)
@@ -60,8 +57,6 @@ namespace FormattingFixes.NullReturnForIEnumerable
                                 methodDeclr.ReturnType.ToString(), methodDeclr.Identifier.Value));
                         }
                     }
-
-
                 }
             }
         }
