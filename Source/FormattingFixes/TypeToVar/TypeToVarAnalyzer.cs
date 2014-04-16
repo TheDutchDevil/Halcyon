@@ -40,7 +40,8 @@ namespace FormattingFixes.TypeToVar
 
                 if (variableDeclr.Parent is UsingStatementSyntax ||
                     variableDeclr.Parent is ForEachStatementSyntax ||
-                    variableDeclr.Parent is LocalDeclarationStatementSyntax)
+                    variableDeclr.Parent is LocalDeclarationStatementSyntax ||
+                    variableDeclr.Parent is ForStatementSyntax)
                 {
                     /*
                      * Variable declaration is in a using statement, local declaration statement or
@@ -70,22 +71,23 @@ namespace FormattingFixes.TypeToVar
                                         declr.Initializer != null &&
                                         declr.Initializer.Value.CSharpKind() != SyntaxKind.NullLiteralExpression);
 
-            var variableIdentifierIsNotADelegate = true;
+            var variableIdentifierIsNotDynamicOrADelegate = true;
 
             if (variableDeclaration.Type is IdentifierNameSyntax)
             {
                 var type = model.GetTypeInfo(variableDeclaration.Type);
 
-                if (type.Type.TypeKind == TypeKind.Delegate)
+                if (type.Type.TypeKind == TypeKind.Delegate ||
+                    type.Type.TypeKind == TypeKind.DynamicType)
                 {
-                    variableIdentifierIsNotADelegate = false;
+                    variableIdentifierIsNotDynamicOrADelegate = false;
                 }
             }
 
             if (!variableDeclaration.Type.IsVar &&
                 variableDeclaration.DescendantNodes().Any(cNode => cNode is EqualsValueClauseSyntax) &&
                 variableInitializerDoesNotAssignNull &&
-                variableIdentifierIsNotADelegate)
+                variableIdentifierIsNotDynamicOrADelegate)
             {
                 addDiagnostic(Diagnostic.Create(Rule, variableDeclaration.Type.GetLocation(),
                     variableDeclaration.Variables.First().Identifier.Value));
