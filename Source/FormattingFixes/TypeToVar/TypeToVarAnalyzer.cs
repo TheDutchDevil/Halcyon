@@ -47,12 +47,12 @@ namespace FormattingFixes.TypeToVar
                      * for each statement, making it eligible for the refactoring
                      */
 
-                AnalyzeDeclaration(addDiagnostic, variableDeclr);
+                AnalyzeDeclaration(addDiagnostic, variableDeclr, semanticModel);
                 }
             }
         }
 
-        private static void AnalyzeDeclaration(Action<Diagnostic> addDiagnostic, VariableDeclarationSyntax variableDeclaration)
+        private static void AnalyzeDeclaration(Action<Diagnostic> addDiagnostic, VariableDeclarationSyntax variableDeclaration, SemanticModel model)
         {
             var variableInitializerDoesNotAssignNull =
                                 variableDeclaration.Variables.Any(
@@ -60,7 +60,17 @@ namespace FormattingFixes.TypeToVar
                                         declr.Initializer != null &&
                                         declr.Initializer.Value.CSharpKind() != SyntaxKind.NullLiteralExpression);
 
-            var variableIdentifierIsNotADelegate = !(variableDeclaration.Type is IdentifierNameSyntax);
+            var variableIdentifierIsNotADelegate = true;
+
+            if (variableDeclaration.Type is IdentifierNameSyntax)
+            {
+                var type = model.GetTypeInfo(variableDeclaration.Type);
+
+                if (type.Type.TypeKind == TypeKind.Delegate)
+                {
+                    variableIdentifierIsNotADelegate = false;
+                }
+            }
 
             if (!variableDeclaration.Type.IsVar &&
                 variableDeclaration.DescendantNodes().Any(cNode => cNode is EqualsValueClauseSyntax) &&
@@ -71,7 +81,5 @@ namespace FormattingFixes.TypeToVar
                     variableDeclaration.Variables.First().Identifier.Value));
             }
         }
-
-        private String fieldVar = "";
     }
 }
