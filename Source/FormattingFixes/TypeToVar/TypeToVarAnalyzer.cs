@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
@@ -22,29 +24,42 @@ namespace FormattingFixes.TypeToVar
 
         public ImmutableArray<SyntaxKind> SyntaxKindsOfInterest
         {
-            get { return ImmutableArray.Create(SyntaxKind.LocalDeclarationStatement); }
+            get { return ImmutableArray.Create(SyntaxKind.VariableDeclaration); }
         }
 
         public ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get
-            {
-                return ImmutableArray.Create(Rule);
-            }
+            get { return ImmutableArray.Create(Rule); }
         }
 
         public void AnalyzeNode(SyntaxNode node, SemanticModel semanticModel, Action<Diagnostic> addDiagnostic, CancellationToken cancellationToken)
         {
-            var localDeclaration = (LocalDeclarationStatementSyntax) node;
+            if (node is VariableDeclarationSyntax)
+            {
+                var variableDeclr = node as VariableDeclarationSyntax;
 
-            var variableDeclaration = localDeclaration.Declaration;
+                if (variableDeclr.Parent is UsingStatementSyntax ||
+                    variableDeclr.Parent is ForEachStatementSyntax ||
+                    variableDeclr.Parent is LocalDeclarationStatementSyntax)
+                {
+                    /*
+                     * Variable declaration is in a using statement, local declaration statement or
+                     * for each statement, making it eligible for the refactoring
+                     */
 
+                AnalyzeDeclaration(addDiagnostic, variableDeclr);
+                }
+            }
+        }
+
+        private static void AnalyzeDeclaration(Action<Diagnostic> addDiagnostic, VariableDeclarationSyntax variableDeclaration)
+        {
             var variableInitializerDoesNotAssignNull =
-                variableDeclaration.Variables.Any(
-                    declr =>
-                        declr.Initializer != null &&
-                        declr.Initializer.Value.CSharpKind() != SyntaxKind.NullLiteralExpression);
-            
+                                variableDeclaration.Variables.Any(
+                                    declr =>
+                                        declr.Initializer != null &&
+                                        declr.Initializer.Value.CSharpKind() != SyntaxKind.NullLiteralExpression);
+
             var variableIdentifierIsNotADelegate = !(variableDeclaration.Type is IdentifierNameSyntax);
 
             if (!variableDeclaration.Type.IsVar &&
@@ -52,8 +67,11 @@ namespace FormattingFixes.TypeToVar
                 variableInitializerDoesNotAssignNull &&
                 variableIdentifierIsNotADelegate)
             {
-                addDiagnostic(Diagnostic.Create(Rule, variableDeclaration.Type.GetLocation(), variableDeclaration.Variables.First().Identifier.Value));
+                addDiagnostic(Diagnostic.Create(Rule, variableDeclaration.Type.GetLocation(),
+                    variableDeclaration.Variables.First().Identifier.Value));
             }
         }
+
+        private String fieldVar = "";
     }
 }
