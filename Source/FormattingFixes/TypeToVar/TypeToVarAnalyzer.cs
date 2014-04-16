@@ -24,7 +24,7 @@ namespace FormattingFixes.TypeToVar
 
         public ImmutableArray<SyntaxKind> SyntaxKindsOfInterest
         {
-            get { return ImmutableArray.Create(SyntaxKind.VariableDeclaration); }
+            get { return ImmutableArray.Create(SyntaxKind.VariableDeclaration, SyntaxKind.ForEachStatement); }
         }
 
         public ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -48,6 +48,16 @@ namespace FormattingFixes.TypeToVar
                      */
 
                 AnalyzeDeclaration(addDiagnostic, variableDeclr, semanticModel);
+                }
+            }
+            else if (node is ForEachStatementSyntax)
+            {
+                var foreachStatement = node as ForEachStatementSyntax;
+
+                if (!foreachStatement.Type.IsVar)
+                {
+                    addDiagnostic(Diagnostic.Create(Rule, foreachStatement.Type.GetLocation(),
+                        foreachStatement.Identifier.Value));
                 }
             }
         }
