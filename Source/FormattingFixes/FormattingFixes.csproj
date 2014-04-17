@@ -92,7 +92,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EmptyNotImplementedException\NotImplementedExceptionAnalyzer.cs" />
+    <Compile Include="Exceptions\EmptyExceptionAnalyzer.cs" />
     <Compile Include="NullReturnForIEnumerable\NullReturnForIEnumerableAnalyzer.cs" />
     <Compile Include="SingleGetStatementFix\PropertyAccessorSingleLineAnalyzer.cs" />
     <Compile Include="SingleGetStatementFix\PropertyAccesorSingleLineFixProvider.cs" />
