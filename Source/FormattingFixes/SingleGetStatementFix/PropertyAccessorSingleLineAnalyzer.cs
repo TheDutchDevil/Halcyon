@@ -21,7 +21,7 @@ namespace FormattingFixes.SingleGetStatementFix
         private const string MessageFormat = "{0} accessor of {1} can be placed on one line";
         private const string Category = "Naming";
 
-        private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Description, MessageFormat, Category, DiagnosticSeverity.Warning);
+        private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Description, MessageFormat, Category, DiagnosticSeverity.Info);
 
         public ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -41,6 +41,11 @@ namespace FormattingFixes.SingleGetStatementFix
             if (node is AccessorDeclarationSyntax)
             {
                 var accessorDeclr = node as AccessorDeclarationSyntax;
+
+                if (accessorDeclr.Body == null)
+                {
+                    return;
+                }
 
                 var block = accessorDeclr.Body;
 
